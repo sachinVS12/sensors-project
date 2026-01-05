@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcryptjs = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const adminschema = new mongoose.Schema(
@@ -26,4 +26,16 @@ const adminschema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+//pre-save middleware to hash the password before saving to database
+adminschema("save", async function (next) {
+    if (!this.isModified("Password")) {
+        return next();
+    }
+    const salt = await bcrypt.gensalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+
 
