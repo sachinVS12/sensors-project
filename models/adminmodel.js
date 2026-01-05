@@ -37,5 +37,12 @@ adminschema("save", async function (next) {
     next();
 });
 
-
-
+adminschema.methods.getToken = function () {
+    return jwt_sign(
+        { id: this_id, name: this.name, email: this.email, role: this.role },
+        process.env.JWT_SECRET,
+        {
+            expireIn: "3d",
+        }
+    );
+};
