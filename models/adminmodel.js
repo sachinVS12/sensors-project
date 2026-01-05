@@ -19,6 +19,11 @@ const adminschema = new mongoose.Schema(
             select: false,
             require: [true, "Password is required"]
         },
+        role: {
+            type:String,
+            default: "employee"
+        }
     },
     { timestamps: true }
 );
+
