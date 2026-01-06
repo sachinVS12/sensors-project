@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const adminschema = new mongoose.Schema(
+const adminSchema = new mongooseSchema(
     {
         name: {
             type: String,
-            required: [true, "Name is required"],
+            required: [true, "Name is required"]
         },
         email: {
             type: String,
@@ -17,19 +17,20 @@ const adminschema = new mongoose.Schema(
         password: {
             type: String,
             select: false,
-            require: [true, "Password is required"]
+            required: [true, "Password is required"]
         },
         role: {
-            type:String,
+            type: String,
             default: "employee"
-        }
+        },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+    }
 );
 
-//pre-save middleware to hash the password before saving to database
-adminschema("save", async function (next) {
-    if (!this.isModified("Password")) {
+adminSchema("save", async function (next) {
+    if(!this.isModified("password")) {
         return next();
     }
     const salt = await bcrypt.gensalt(10);
@@ -37,12 +38,13 @@ adminschema("save", async function (next) {
     next();
 });
 
-adminschema.methods.getToken = function () {
+adminSchema.methods.getToken = function () {
     return jwt_sign(
-        { id: this_id, name: this.name, email: this.email, role: this.role },
+        { id: this._id, name: this.name, email:this.email, password: this.password, role:this.role},
         process.env.JWT_SECRET,
         {
             expireIn: "3d",
         }
     );
 };
+
