@@ -29,6 +29,8 @@ const adminSchema = new mongooseSchema(
     }
 );
 
+
+//pre-save middleware to hash the password before saving the database
 adminSchema("save", async function (next) {
     if(!this.isModified("password")) {
         return next();
@@ -38,6 +40,8 @@ adminSchema("save", async function (next) {
     next();
 });
 
+
+// mtehod to genrate jwtToken for logedin or signdup
 adminSchema.methods.getToken = function () {
     return jwt_sign(
         { id: this._id, name: this.name, email:this.email, password: this.password, role:this.role},
@@ -48,3 +52,16 @@ adminSchema.methods.getToken = function () {
     );
 };
 
+
+
+//method to verify user enter password with existing password in database 
+adminSchema.methods.verifypassword = async function (enterpassword) {
+    return await bcrypt.compare(enterpassword, this.password);
+};
+
+
+// create the user model
+const Admin = mongoose.model("Admin", adminSchema);
+
+//moduel exports
+module.eports = Admin;
