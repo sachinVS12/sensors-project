@@ -98,7 +98,7 @@ mangerSchema.methods.getToken = function () {
 
 // method to enterpaswor to exiating password in database
 mangerSchema.methods.verify = async function (enterpassword) {
-    return await bcrypt.compare(thispassword, enterpassword);
+    return await bcrypt.compare(this.password, enterpassword);
 };
 
 // create manger model
