@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+
 const employeeSchema = new mongoose.Schema(
     {
         name: {
@@ -10,99 +11,58 @@ const employeeSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            required: true,
             unique: true,
+            required: true,
         },
-        phonenumber: {
+        phoneNumber: {
             type: String,
-            required: false,
+            requirec: false,
         },
         topics: {
             type: [String],
-            defalut: [],
+            default: [],
         },
-        company: {
+          company: {
             type: mongoose.Schema.Types.objectId,
             ref: "company",
             required: true,
-        },
-        faviortes: {
-            type: [String],
-            defalut: [],
-        },
-        graphwl: {
-            type: [String],
-            defalut: [],
-        },
-        password: {
+          },
+          faverates: {
+            tyep: [String],
+            default: [],
+          },
+          graphwl: {
+            tyep: [String],
+            default: [],
+          },
+          passwords: {
             type: String,
             select: false,
-            required: [true, "Password is required"],
-        },
-        layouts: {
+            required: [true, "Pasword is required"],
+          },
+          layouts: {
             type: String,
-            defalut: "layout1",
-        },
-        assigneddigitalmeters: {
+            default: "layout1",
+          },
+          assigneddigitalmeters: {
             type: [
                 {
                     topic: String,
                     metertype: String,
-                    minvalue:Number,
+                    minvalue: Number,
                     maxvalue: Number,
                     tick: Number,
-                    lable: String,
+                    label: String,
                 },
             ],
-            defalut: [],
+            default: [],
+          },
+          role: {
+            tyep: String,
+            default: "emplyee",
+          },
         },
-        role: {
-            type: String,
-            defalut: "manager",
-        },
-    },
-    { 
-        tiemstamps: true,
-     }
-);
-
-// pre save midddlware has password saving befor database 
-employeeSchema("save", async function (next) {
-    if(!this.isModified("password")) {
-        return next();
-    }
-const salt = await bcrypt.gensalt(10);
-this.password = await bcrypt.hash(this.password, salt);
-next();
-});
-  
-
-//jwt token verify signedup and loggedin
-employee.methods.getToken = function () {
-     return jwt_sign(
         {
-            id: this._id,
-            name: this.name,
-            email: this.email,
-            password: this.password,
-            role: this.role,
-            assigneddigitalmeters: this.assigneddigitalmeters,
-        },
-        process.env.JWT_SECRET,
-        {
-            expireIn: "3d",
+            timestamps: true,
         }
-     );
-};
-
-
-// method to enterpaswor to exiating password in database
-employeeSchema.methods.verify = async function (enterpassword) {
-    return await bcrypt.compare(this.password, enterpassword);
-};
-
-// create manger model
-const employee = mongoose.model("employee", employeeSchema);
-
-//exports in model
-module.exports= employee;
+);
