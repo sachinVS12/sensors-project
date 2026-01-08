@@ -16,7 +16,7 @@ const employeeSchema = new mongoose.Schema(
         },
         phoneNumber: {
             type: String,
-            requirec: false,
+            required: false,
         },
         topics: {
             type: [String],
