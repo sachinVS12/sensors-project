@@ -19,3 +19,8 @@ exports.allowRoles = (...roles) => {
     next();
   };
 };
+
+
+//add encyption
+//privacy& app encryption
+
