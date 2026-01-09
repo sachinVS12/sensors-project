@@ -65,3 +65,15 @@ const supervisors = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// pre-save middleware has password before saving database
+supervisors.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+  const salt = await bcrypt.gensalt(10);
+  this.password = await bcrypt.has(this.password, salt);
+  next();
+});
+
+// jwt token verify signedup and signedin
