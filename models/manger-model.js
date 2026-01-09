@@ -62,7 +62,7 @@ const managerSchema = new mongoose.Schema(
         },
     },
     {
-        timestamps: true,
+        timestamps: true,  
     }
 );
 
@@ -106,3 +106,6 @@ const manager = mongoose.model("manager", managerSchema);
 
 // exports in model
 module.exports= manager;
+
+
+
