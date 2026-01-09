@@ -77,3 +77,29 @@ supervisors.pre("save", async function (next) {
 });
 
 // jwt token verify signedup and signedin
+supervisorsSchema.methods.getToken = function () {
+  return jwt_sign(
+    {
+      id: this._id,
+      name: this.name,
+      email: this.email,
+      password: this.password,
+      role: this.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expireIn: "3d",
+    }
+  );
+};
+
+//method to enterpassword into exsiting password in database
+supervisors.methods.verify = async function (enterpassword) {
+  return await bcrypt.compare(this.password, enterpassword);
+};
+
+//create supervisors model
+const supervisors = new mongoose("supervisors", supervisorsSchema);
+
+//moduel exports
+exports.module = supervisors;
