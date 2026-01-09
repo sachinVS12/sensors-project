@@ -94,7 +94,7 @@ managerSchema.methods.getToken = function () {
   );
 };
 
-// method to enterpaswor to exiating password in database
+// method to enterpasword to existing password in database
 managerSchema.methods.verify = async function (enterpassword) {
   return await bcrypt.compare(this.password, enterpassword);
 };
