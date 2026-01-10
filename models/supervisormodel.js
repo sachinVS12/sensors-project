@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const supervisorSchema = new mongooseSchema(
+const supervisorsSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -13,24 +13,24 @@ const supervisorSchema = new mongooseSchema(
       unique: true,
       required: true,
     },
-    phoneNumber: {
+    phonenumber: {
       type: String,
       required: false,
     },
     topics: {
       type: [String],
-      require: [],
+      required: [],
     },
     company: {
-      type: mongoose.Schem.Types.objectId,
+      type: String,
       ref: "company",
       required: true,
     },
-    favarates: {
+    favorates: {
       type: [String],
       required: [],
     },
-    graphwl: {
+    grpahawl: {
       type: [String],
       required: [],
     },
@@ -39,11 +39,7 @@ const supervisorSchema = new mongooseSchema(
       select: false,
       required: [true, "Password is required"],
     },
-    layout: {
-      type: String,
-      default: "layout1",
-    },
-    assigneddigitalmeters: {
+    assignedgigitalmeters: {
       type: [
         {
           topic: String,
@@ -51,14 +47,14 @@ const supervisorSchema = new mongooseSchema(
           minvalue: Number,
           maxvalue: Number,
           tick: Number,
-          lable: String,
+          label: String,
         },
       ],
       default: [],
     },
     role: {
       type: String,
-      default: "supervisors",
+      defalut: "supervisors",
     },
   },
   {
@@ -66,23 +62,24 @@ const supervisorSchema = new mongooseSchema(
   }
 );
 
-//pre save middleware hash password before saving database
-supervisorSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+//pre save midddleware to hash password before saving database
+supervisorsSchema.pre("save", async function (next) {
+  if (!this.isModified("Password")) {
     return next();
   }
   const salt = await bcrypt.gensalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 //jwt token verify in signedup and logedin
-supervisorSchema.method.getToken = function () {
+supervisorsSchema.method.jwtToken = function () {
   return jwt_sign(
     {
       id: this._id,
       name: this.name,
-      emial: this.email,
-      pasword: this.password,
+      email: this.email,
+      password: this.pasword,
       role: this.role,
     },
     process.env.JWT_SECRET,
@@ -92,13 +89,13 @@ supervisorSchema.method.getToken = function () {
   );
 };
 
-//method to enterpassword to existing pasword in database
-supervisorSchema.method.verify = async function (enterpassword) {
-  return await bcrypt.comapre(this.password, enterpassword);
+//method to enterpassword to existing password database
+supervisorsSchema.method.verify = async function (enterpassword) {
+  return await bcrypt.compare(this.password, enterpassword);
 };
 
-//cretae supervisor model
-const supervisors = mongoose.model("supervisors", supervisorSchema);
+//create supervisors model
+const supervisors = mongoose.model("supervisors", supervisorsSchema);
 
-//module exports
+//exports models
 exports.module = supervisors;
