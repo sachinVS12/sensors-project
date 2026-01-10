@@ -74,3 +74,31 @@ supervisorSchema.pre("save", async function (next) {
   const salt = await bcrypt.gensalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+//jwt token verify in signedup and logedin
+supervisorSchema.method.getToken = function () {
+  return jwt_sign(
+    {
+      id: this._id,
+      name: this.name,
+      emial: this.email,
+      pasword: this.password,
+      role: this.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      ExpireIn: "3d",
+    }
+  );
+};
+
+//method to enterpassword to existing pasword in database
+supervisorSchema.method.verify = async function (enterpassword) {
+  return await bcrypt.comapre(this.password, enterpassword);
+};
+
+//cretae supervisor model
+const supervisors = mongoose.model("supervisors", supervisorSchema);
+
+//module exports
+exports.module = supervisors;
