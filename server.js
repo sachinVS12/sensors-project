@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { JsonWebTokenError } = require("jsonwebtoken");
 const app = require("./app");
 const connectDB = require("./config/db");
 
