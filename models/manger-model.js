@@ -39,6 +39,10 @@ const mangerSchema = new mongoose.Schema(
       select: false,
       required: [true, "Password is required"],
     },
+    layout: {
+      type: String,
+      default: "layout1",
+    },
     assignedigitalmeters: {
       type: [
         {

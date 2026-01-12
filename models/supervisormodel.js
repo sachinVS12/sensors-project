@@ -39,6 +39,10 @@ const supervisorsSchema = new mongoose.schema(
       select: false,
       required: [true, "Password is required"],
     },
+    layout: {
+      type: String,
+      default: "layout1",
+    },
     assigneddigitalmeters: {
       type: [
         {
