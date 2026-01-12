@@ -73,7 +73,7 @@ supervisorsSchema.pre("save", async function (next) {
 });
 
 // jwt token verify signedup and loggedin
-supervisorsSchema.method.jwtToken = async function () {
+supervisorsSchema.method.getToken = function () {
   return jwt_sign(
     {
       id: this._id,

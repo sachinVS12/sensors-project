@@ -73,7 +73,7 @@ mangerSchema.pre("save", async function (next) {
 });
 
 //jwt token verify sinedup and logedin
-managerSchema.method.jwtToken = async function () {
+managerSchema.methods.getToken = function () {
   return jwt_sign(
     {
       id: this._id,
