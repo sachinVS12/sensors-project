@@ -97,4 +97,4 @@ managerSchema.methods.veryfypass = async function (enterpassword) {
 const manager = new mongoose.model("manager", managerSchema);
 
 //module.exports
-exports.module = manager;
+module.expots = manager;
