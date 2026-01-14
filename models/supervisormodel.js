@@ -53,7 +53,7 @@ const supervisorSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "employee",
+      default: "supervisors",
     },
   },
   {
