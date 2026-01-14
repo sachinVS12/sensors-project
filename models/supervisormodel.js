@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const supervisorsSchema = new mongoose.Schema(
+const supervisorSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -10,12 +10,12 @@ const supervisorsSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      required: true,
       unique: true,
-      required: true,
     },
-    phonoNumber: {
+    phonenumber: {
       type: String,
-      required: true,
+      required: fasle,
     },
     topics: {
       type: [String],
@@ -27,12 +27,12 @@ const supervisorsSchema = new mongoose.Schema(
       required: true,
     },
     favorates: {
-      type: [String],
+      type: [string],
       required: [],
     },
     graphwl: {
       type: [String],
-      required: [],
+      requiured: [],
     },
     layout: {
       type: String,
@@ -53,7 +53,7 @@ const supervisorsSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "supervisors",
+      default: "employee",
     },
   },
   {
@@ -61,8 +61,8 @@ const supervisorsSchema = new mongoose.Schema(
   }
 );
 
-//pre-save middleware to hashpassword before save database
-supervisorsSchema.pre("save", async function (next) {
+//pre-save middleware hash password to before save databse
+supervisorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
@@ -71,16 +71,15 @@ supervisorsSchema.pre("save", async function (next) {
   next();
 });
 
-//method to verify jwt token in signedup and logedin
-supervisorsSchema.method.getToken = function () {
+//method to generate jwt token verify signedup and loggedin
+supervisorSchema.method.getToken = function () {
   return jwt.sign(
     {
       id: this._id,
       name: this.name,
       email: this.email,
-      password: this.password,
+      Password: this.password,
       role: this.role,
-      assigneddigitalmeters: this.assigneddigitalmeters,
     },
     process.env.JWT_SECRET,
     {
@@ -89,13 +88,13 @@ supervisorsSchema.method.getToken = function () {
   );
 };
 
-//method to eneterpassword to existing password
-supervisorsSchema.method.verifypass = async function (enterpassword) {
-  return await bcrypt.compare(enterpassword, this.password);
+//method to enterpassword to exsiting password
+supervisorSchema.methods.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(this.password, enterpassword);
 };
 
-// create the mongoose model
-const supervisors = mongoose.model("supervisors", supervisorsSchema);
+//create supervisors model
+const supervisors = mongoose.model("supervisors", supervisorSchema);
 
-//export the model
-module.exports = supervisors;
+//exports module
+moduel.exports = supervisors;
