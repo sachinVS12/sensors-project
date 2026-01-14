@@ -13,16 +13,16 @@ const supervisorsSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    phoneNumber: {
+    phonoNumber: {
       type: String,
-      required: false,
+      required: true,
     },
     topics: {
       type: [String],
       required: [],
     },
     company: {
-      type: mongoose.schema.Types.objectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "company",
       required: true,
     },
@@ -33,11 +33,6 @@ const supervisorsSchema = new mongoose.Schema(
     graphwl: {
       type: [String],
       required: [],
-    },
-    password: {
-      type: [String],
-      select: false,
-      required: [true, "Password is required"],
     },
     layout: {
       type: String,
@@ -66,40 +61,41 @@ const supervisorsSchema = new mongoose.Schema(
   }
 );
 
-// pre save middleware to hash password before save database
+//pre-save middleware to hashpassword before save database
 supervisorsSchema.pre("save", async function (next) {
-  if (!this.isModified("Password")) {
+  if (!this.isModified("password")) {
     return next();
   }
-  const salt = await bcrypt.gensalt(10);
+  const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
-// jwt token verify signedup and loggedin
+//method to verify jwt token in signedup and logedin
 supervisorsSchema.method.getToken = function () {
-  return jwt_sign(
+  return jwt.sign(
     {
       id: this._id,
       name: this.name,
       email: this.email,
       password: this.password,
       role: this.role,
+      assigneddigitalmeters: this.assigneddigitalmeters,
     },
     process.env.JWT_SECRET,
     {
-      ExpireIn: "3d",
+      expiresIn: "3d",
     }
   );
 };
 
-//method to enterpassword to exsting to password
-supervisorsSchema.method.verify = async function (enterpassword) {
-  return await bcrypt.compare(thispassword, enterpassword);
+//method to eneterpassword to existing password
+supervisorsSchema.method.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(enterpassword, this.password);
 };
 
-//create model
-const supervisors = new mongoose.model("supervisors", supervisorsSchema);
+// create the mongoose model
+const supervisors = mongoose.model("supervisors", supervisorsSchema);
 
-//exports the model
-exports.module = supervisors;
+//export the model
+module.exports = supervisors;
