@@ -13,7 +13,7 @@ exports.createUser = async (req, res) => {
   await User.create({
     username,
     password: hashedPassword,
-    role
+    role,
   });
 
   res.json({ message: `${role} created successfully` });
