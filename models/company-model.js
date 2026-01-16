@@ -8,18 +8,17 @@ const companySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
+    emial: {
       type: String,
       required: true,
-      unique: true,
     },
-    phoneNumber: {
+    phonenumber: {
       type: String,
-      required: false,
+      required: fasle,
     },
-    label: {
+    lebel: {
       type: String,
-      required: false,
+      required: true,
     },
     address: {
       type: String,
@@ -31,6 +30,6 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-const company = new mongoose.model("company", companySchema);
+const company = mongoose.model("company", companySchema);
 
 exports.module = company;
