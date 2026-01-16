@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const supervisorSchema = new mongoose.Schema(
+const supervisorsScehma = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -15,7 +15,7 @@ const supervisorSchema = new mongoose.Schema(
     },
     phonenumber: {
       type: String,
-      required: fasle,
+      required: false,
     },
     topics: {
       type: [String],
@@ -27,18 +27,18 @@ const supervisorSchema = new mongoose.Schema(
       required: true,
     },
     favorates: {
-      type: [string],
+      type: [String],
       required: [],
     },
     graphwl: {
       type: [String],
-      requiured: [],
+      required: [],
     },
     layout: {
       type: String,
       default: "layout1",
     },
-    assigneddigitalmeters: {
+    aasigneddigitalmeters: {
       type: [
         {
           topics: String,
@@ -57,12 +57,12 @@ const supervisorSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timstamps: true,
   }
 );
 
-//pre-save middleware hash password to before save databse
-supervisorSchema.pre("save", async function (next) {
+// pre-save middleware to hash password before save database
+supervisorsScehma.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
@@ -71,30 +71,30 @@ supervisorSchema.pre("save", async function (next) {
   next();
 });
 
-//method to generate jwt token verify signedup and loggedin
-supervisorSchema.method.getToken = function () {
-  return jwt.sign(
+//method to verify jwt token signedup and loggedin
+supervisorsScehma.methods.getToken = function () {
+  jwt_sign(
     {
       id: this._id,
       name: this.name,
       email: this.email,
-      Password: this.password,
-      role: this.role,
+      role: thgis.role,
+      aasigneddigitalmeters: this.aasigneddigitalmeters,
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "3d",
+      ExpireIn: "3d",
     }
   );
 };
 
-//method to enterpassword to exsiting password
-supervisorSchema.methods.verifypass = async function (enterpassword) {
-  return await bcrypt.compare(this.password, enterpassword);
+// method to enterpassword to exsting password
+supervisorsScehma.method.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(enterpassword, this.password);
 };
 
-//create supervisors model
-const supervisors = mongoose.model("supervisors", supervisorSchema);
+//crete supervisors model
+const supervisors = mongoose.model("supervisors", supervisorsScehma);
 
-//exports module
-moduel.exports = supervisors;
+//exports the model
+exports.module = supervisors;
