@@ -10,8 +10,8 @@ const managerSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true,
       required: true,
+      unique: true,
     },
     phonenumber: {
       type: String,
@@ -22,17 +22,21 @@ const managerSchema = new mongoose.Schema(
       required: [],
     },
     company: {
-      type: company.Schema.Types.objectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "company",
       required: true,
     },
     favorates: {
       type: [String],
-      required: [],
+      type: [],
     },
-    grapghwl: {
+    graphwl: {
       type: [String],
       required: [],
+    },
+    password: {
+      type: String,
+      select: false,
     },
     layout: {
       type: String,
@@ -49,7 +53,6 @@ const managerSchema = new mongoose.Schema(
           label: String,
         },
       ],
-      default: [],
     },
     role: {
       type: String,
@@ -57,22 +60,22 @@ const managerSchema = new mongoose.Schema(
     },
   },
   {
-    timstamps: true,
-  }
+    timestamps: true,
+  },
 );
 
-//pre-save middleware  hash password to before save database
+//pre-sve middleware hash password to before save database
 managerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.paasword = await bcrypt.hash(this.paassword, salt);
   next();
 });
 
-//method to generate jwt token verify signdeup and loggedin
-managerSchema.methods.getToken = function () {
+//method to verify jwt token signedup and loggedin
+managerSchema.method.getToken = function () {
   return jwt.sign(
     {
       id: this._id,
@@ -83,18 +86,18 @@ managerSchema.methods.getToken = function () {
     },
     process.env.JWT_SECRET,
     {
-      expareIn: "3d",
-    }
+      expiresIn: "3d",
+    },
   );
 };
 
-//method to verify enterpassword to existing password
-managerSchema.methods.veryfypass = async function (enterpassword) {
-  return await bcrypt.compare(enterpassword, this.password);
+// method to enterpassword to exsting password
+managerSchema.method.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(enterpassword, thispassword);
 };
 
-//create manager model
-const manager = new mongoose.model("manager", managerSchema);
+// create  manager model
+const manager = mongoose.model("manager", managerSchema);
 
-//module.exports
-module.expots = manager;
+//export module
+exporst.module = manager;
