@@ -54,3 +54,18 @@ const admin = asyncHandler(async (req, res, next) => {
     token,
   });
 });
+
+//company
+const createcompany = asyncHandler(async (req, res, next) => {
+  const { name, email, phonenumber, address, label } = req.body;
+  const company = await company.findone({ name });
+  if (company) {
+    return next(new ErrorResponse("company alredy exists!", 409));
+  }
+  const newcompany = new company({ name, email, phonenumber, address, label });
+  await newcompany.save();
+  res.status(200).json({
+    success: true,
+    data: newcompany,
+  });
+});
