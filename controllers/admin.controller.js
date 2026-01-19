@@ -26,59 +26,56 @@ const login = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse("Invalid Credentials", 401));
   }
-  const isMatch = await user.verifypass(password);
-  if (!isMatch) {
+  const ismatch = await user.verifypass(password);
+  if (!ismatch) {
     return next(new ErrorResponse("Invalid Credentials", 401));
   }
-  const token = await user.getToken();
+  const token = await user.gettoken();
   res.status(200).json({
     success: true,
     token,
   });
 });
 
-//admin
 const admin = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
-  const admin = await admin.findone({ email }).select("+password");
-  if (!admin) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
+  const admin = await admin.findone({ email }).select("+select");
+  if (!user) {
+    return next(new ErrorResponse("Invalid crdentials", 401));
   }
-  const isMatch = await admin.verifypass(password);
+  const isMatch = await verifypass(password);
   if (!isMatch) {
     return next(new ErrorResponse("Invalid Credentials", 401));
   }
-  const token = await admin.getToken();
-  res.status(200).json({
-    success: true,
-    data: user,
-    token,
-  });
+  const token = await admin.gettoken();
+  (res.status(200),
+    json({
+      success: true,
+      token,
+    }));
 });
 
-//create company
-const creatcompany = asyncHandler(async (req, res, next) => {
-  const { name, email, phonenumber, lable, address } = req.body;
-  const company = await company({ name });
+//cretecompany
+const company = asyncHandler(async (req, res, next) => {
+  const { name, email, phonnumber, label, address } = req.body;
+  const company = await company.findone({ name });
   if (!company) {
-    return next(new ErrorResponse("Invalid Credentials", 409));
+    return next(new ErrorResponse("Invalid Credentials", 401));
   }
-  const newcompany = new company({ name, email, phonenumber, lable, address });
+  const newcompany = new company({ name, email, phonnumber, label, address });
   await newcompany.save();
   res.status(200).json({
     success: true,
-    data: newcompany,
+    data: compnay,
   });
 });
 
-//get all companys
-const company = asyncHandler(async (req, res, next) => {
+//getsinglecompany
+const getsinglecompany = asyncHandler(async (req, res, next) => {
   const { companyId } = req.params;
-  const company = await company.findbyId({ companyId });
-  if (!company) {
-    return next(
-      new ErrorResponse(`no company found with Id ${companyId}`, 404),
-    );
+  const company = await company.findById({ companyId });
+  if (!companyId) {
+    return next(new ErrorResponse(`no company found with id ${companyId}`));
   }
   res.status(200).json({
     success: true,
@@ -86,22 +83,16 @@ const company = asyncHandler(async (req, res, next) => {
   });
 });
 
-//delete company
+//deletecompany
 const deletecompany = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const company = await company.findById(id);
   if (!company) {
-    return next(new ErrorResponse(`no company found with Id ${id}`, 404));
+    return next(new ErrorResponse(`no company fund iwith id ${id}`));
   }
-  await company.deleteone();
+  await token.deleteone();
   res.status(200).json({
     success: true,
     data: [],
   });
-});
-
-//get all companies
-const getAllCompanies = asyncHandler(async (req, res, next) => {
-  const company = await company.find().sort({ createdAt: -1 });
-  res.status(200).json(companies);
 });
