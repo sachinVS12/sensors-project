@@ -70,3 +70,38 @@ const creatcompany = asyncHandler(async (req, res, next) => {
     data: newcompany,
   });
 });
+
+//get all companys
+const company = asyncHandler(async (req, res, next) => {
+  const { companyId } = req.params;
+  const company = await company.findbyId({ companyId });
+  if (!company) {
+    return next(
+      new ErrorResponse(`no company found with Id ${companyId}`, 404),
+    );
+  }
+  res.status(200).json({
+    success: true,
+    data: company,
+  });
+});
+
+//delete company
+const deletecompany = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const company = await company.findById(id);
+  if (!company) {
+    return next(new ErrorResponse(`no company found with Id ${id}`, 404));
+  }
+  await company.deleteone();
+  res.status(200).json({
+    success: true,
+    data: [],
+  });
+});
+
+//get all companies
+const getAllCompanies = asyncHandler(async (req, res, next) => {
+  const company = await company.find().sort({ createdAt: -1 });
+  res.status(200).json(companies);
+});
