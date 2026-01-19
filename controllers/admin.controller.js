@@ -55,3 +55,18 @@ const admin = asyncHandler(async (req, res, next) => {
     token,
   });
 });
+
+//create company
+const creatcompany = asyncHandler(async (req, res, next) => {
+  const { name, email, phonenumber, lable, address } = req.body;
+  const company = await company({ name });
+  if (!company) {
+    return next(new ErrorResponse("Invalid Credentials", 409));
+  }
+  const newcompany = new company({ name, email, phonenumber, lable, address });
+  await newcompany.save();
+  res.status(200).json({
+    success: true,
+    data: newcompany,
+  });
+});
