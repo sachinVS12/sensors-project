@@ -30,7 +30,7 @@ const login = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse("Invalid Credentials", 401));
   }
-  const token = await getToken();
+  const token = await user.getToken();
   res.status(200).json({
     success: true,
     token,
@@ -46,26 +46,12 @@ const admin = asyncHandler(async (req, res, next) => {
   }
   const isMatch = await admin.verifypass(password);
   if (!isMatch) {
-    return next(new ErrorResponse("Invalid credentials", 401));
+    return next(new ErrorResponse("Invalid Credentials", 401));
   }
   const token = await admin.getToken();
   res.status(200).json({
     success: true,
+    data: user,
     token,
-  });
-});
-
-//company
-const createcompany = asyncHandler(async (req, res, next) => {
-  const { name, email, phonenumber, address, label } = req.body;
-  const company = await company.findone({ name });
-  if (company) {
-    return next(new ErrorResponse("company alredy exists!", 409));
-  }
-  const newcompany = new company({ name, email, phonenumber, address, label });
-  await newcompany.save();
-  res.status(200).json({
-    success: true,
-    data: newcompany,
   });
 });
