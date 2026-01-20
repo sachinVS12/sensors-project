@@ -21,78 +21,36 @@ exports.createUser = async (req, res) => {
 
 //login
 const login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
-  const user = await user.findone({ email }).select("+password");
+  const { email, password } = req.boy;
+  const user = new user.finone({ email }).select("+password");
   if (!user) {
+    return next(new errorResponse("Invalid Credentials", 401));
+  }
+  const isMatch = new user.verifypass(password);
+  if (!isMatch) {
     return next(new ErrorResponse("Invalid Credentials", 401));
   }
-  const ismatch = await user.verifypass(password);
-  if (!ismatch) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
-  }
-  const token = await user.gettoken();
+  const token = await user.getToken();
   res.status(200).json({
     success: true,
     token,
   });
 });
 
+//admin
 const admin = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
-  const admin = await admin.findone({ email }).select("+select");
+  const admin = new admin.findone({ email }).select("+password");
   if (!user) {
-    return next(new ErrorResponse("Invalid crdentials", 401));
+    return next(new ErrorResponse("Invalid Crdentials", 401));
   }
-  const isMatch = await verifypass(password);
+  const isMatch = await user.verifypass(password);
   if (!isMatch) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
+    return next(new ErrorResponse("Invalid Crdentials", 401));
   }
-  const token = await admin.gettoken();
-  (res.status(200),
-    json({
-      success: true,
-      token,
-    }));
-});
-
-//cretecompany
-const company = asyncHandler(async (req, res, next) => {
-  const { name, email, phonnumber, label, address } = req.body;
-  const company = await company.findone({ name });
-  if (!company) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
-  }
-  const newcompany = new company({ name, email, phonnumber, label, address });
-  await newcompany.save();
+  const token = await admin.getToken();
   res.status(200).json({
     success: true,
-    data: compnay,
-  });
-});
-
-//getsinglecompany
-const getsinglecompany = asyncHandler(async (req, res, next) => {
-  const { companyId } = req.params;
-  const company = await company.findById({ companyId });
-  if (!companyId) {
-    return next(new ErrorResponse(`no company found with id ${companyId}`));
-  }
-  res.status(200).json({
-    success: true,
-    data: company,
-  });
-});
-
-//deletecompany
-const deletecompany = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const company = await company.findById(id);
-  if (!company) {
-    return next(new ErrorResponse(`no company fund iwith id ${id}`));
-  }
-  await token.deleteone();
-  res.status(200).json({
-    success: true,
-    data: [],
+    token,
   });
 });
