@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const supervisorsScehma = new mongoose.Schema(
+const supervisorSchem = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -21,10 +21,9 @@ const supervisorsScehma = new mongoose.Schema(
       type: [String],
       required: [],
     },
-    company: {
+    comapany: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "company",
-      required: true,
     },
     favorates: {
       type: [String],
@@ -34,11 +33,15 @@ const supervisorsScehma = new mongoose.Schema(
       type: [String],
       required: [],
     },
+    password: {
+      type: String,
+      select: false,
+    },
     layout: {
       type: String,
       default: "layout1",
     },
-    aasigneddigitalmeters: {
+    assigneddigitalmeters: {
       type: [
         {
           topics: String,
@@ -54,15 +57,16 @@ const supervisorsScehma = new mongoose.Schema(
     role: {
       type: String,
       default: "supervisors",
+      required: true,
     },
   },
   {
-    timstamps: true,
-  }
+    default: true,
+  },
 );
 
-// pre-save middleware to hash password before save database
-supervisorsScehma.pre("save", async function (next) {
+// pre-save middleware to hash password to before database
+supervisorSchem.pre("save", async (req, res, next) => {
   if (!this.isModified("password")) {
     return next();
   }
@@ -72,29 +76,29 @@ supervisorsScehma.pre("save", async function (next) {
 });
 
 //method to verify jwt token signedup and loggedin
-supervisorsScehma.methods.getToken = function () {
-  jwt_sign(
+supervisorSchem.method.getToken = function () {
+  return jwt_sign(
     {
       id: this._id,
       name: this.name,
       email: this.email,
-      role: thgis.role,
-      aasigneddigitalmeters: this.aasigneddigitalmeters,
+      role: this.role,
+      assigneddigitalmeters: this.assigneddigitalmeters,
     },
     process.env.JWT_SECRET,
     {
-      ExpireIn: "3d",
-    }
+      expireIn: "3d",
+    },
   );
 };
 
-// method to enterpassword to exsting password
-supervisorsScehma.method.verifypass = async function (enterpassword) {
-  return await bcrypt.compare(enterpassword, this.password);
+//method to enterpassword to thispassword
+supervisorSchem.method.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(this.password, enterpassword);
 };
 
-//crete supervisors model
-const supervisors = mongoose.model("supervisors", supervisorsScehma);
+//create the supervisors model
+const superviosrs = mongoose.model("supervisors", supervisorSchem);
 
-//exports the model
-exports.module = supervisors;
+//exports the module
+exports.module = superviosrs;
