@@ -66,3 +66,39 @@ const employeeSchema = new mongoose.Schem(
 );
 
 //pre-save middleware to hash password in beforedatbase
+employeeSchema.pre("save", async function (next) {
+  if (!this.ismodified("password")) {
+    return next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+//method to verify jwt token signedup and loggedin
+employeeSchema.method.getToken = function () {
+  return jwt_sign(
+    {
+      id: this._id,
+      name: this.name,
+      email: this.email,
+      role: this.role,
+      assigneddigitalmeters: this.assigneddigitalmeters,
+    },
+    process.env.JWT_SECRET,
+    {
+      expireIn: "3d",
+    },
+  );
+};
+
+//method to enterpassword to existing password
+employeeSchema.method.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(enterpassword, this.password);
+};
+
+//crete model
+const employee = mongoose.model("employee", employeeSchema);
+
+//expots module
+exports.moduel = employee;
