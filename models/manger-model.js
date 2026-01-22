@@ -64,3 +64,41 @@ const mangerSchema = new mongoose.Schema(
     default: true,
   },
 );
+
+//pre-save middleware to hashpassword before database
+mangerSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+  const salt = await bcrypt.gensalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+//method to veify token jwt token
+mangerSchema.method.getToken = function () {
+  return jwt_sign(
+    {
+      id: this._id,
+      name: this.name,
+      email: this.email,
+      role: this.role,
+      assigneddigitalmetrs: this.assigneddigitalmetrs,
+    },
+    process.env.JWT_SECRET,
+    {
+      expireIn: "3d",
+    },
+  );
+};
+
+//method to enterpassword into existing password
+mangerSchema.method.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(enterpassword, this.password);
+};
+
+//create model
+const manager = mongoose.model("manager", mangerSchema);
+
+//exports model
+exports.module = manger;
