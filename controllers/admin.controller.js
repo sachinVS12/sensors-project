@@ -19,37 +19,35 @@ exports.createUser = async (req, res) => {
   res.json({ message: `${role} created successfully` });
 };
 
-//login
 const login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.boy;
-  const user = new user.finone({ email }).select("+password");
+  const { email, password } = req.body;
+  const user = await user.findOne({ email }).select("+password");
   if (!user) {
-    return next(new errorResponse("Invalid Credentials", 401));
+    return next(new ErrorResponse("Invalide Crdentials", 401));
   }
-  const isMatch = new user.verifypass(password);
+  const isMatch = await user.verifypass(password);
   if (!isMatch) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
+    return next(new ErrorResponse("Invalide Crdentials", 401));
   }
   const token = await user.getToken();
-  res.status(200).json({
+  res.status(201).json({
     success: true,
     token,
   });
 });
 
-//admin
 const admin = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
-  const admin = new admin.findone({ email }).select("+password");
+  const admin = await admin.findOne({ email }).select("+password");
   if (!user) {
     return next(new ErrorResponse("Invalid Crdentials", 401));
   }
-  const isMatch = await user.verifypass(password);
+  const isMatch = await verifypass(password);
   if (!isMatch) {
     return next(new ErrorResponse("Invalid Crdentials", 401));
   }
   const token = await admin.getToken();
-  res.status(200).json({
+  res.status(201).json({
     success: true,
     token,
   });
