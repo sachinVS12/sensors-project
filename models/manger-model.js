@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+const bcrypt = require(bcryptjs);
 const jwt = require("jsonwebtoken");
 
-const managerSchema = new mongoose.Schema(
+const mangerSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -24,25 +24,25 @@ const managerSchema = new mongoose.Schema(
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "company",
-      required: true,
     },
     favorates: {
       type: [String],
-      type: [],
+      required: [true],
     },
     graphwl: {
       type: [String],
-      required: [],
+      required: [true],
     },
     password: {
       type: String,
+      required: true,
       select: false,
     },
     layout: {
       type: String,
       default: "layout1",
     },
-    assigneddigitalmeters: {
+    assigneddigitalmetrs: {
       type: [
         {
           topics: String,
@@ -53,6 +53,7 @@ const managerSchema = new mongoose.Schema(
           label: String,
         },
       ],
+      default: [],
     },
     role: {
       type: String,
@@ -60,44 +61,6 @@ const managerSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    default: true,
   },
 );
-
-//pre-sve middleware hash password to before save database
-managerSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
-  const salt = await bcrypt.genSalt(10);
-  this.paasword = await bcrypt.hash(this.paassword, salt);
-  next();
-});
-
-//method to verify jwt token signedup and loggedin
-managerSchema.method.getToken = function () {
-  return jwt.sign(
-    {
-      id: this._id,
-      name: this.name,
-      email: this.email,
-      role: this.role,
-      assigneddigitalmeters: this.assigneddigitalmeters,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "3d",
-    },
-  );
-};
-
-// method to enterpassword to exsting password
-managerSchema.method.verifypass = async function (enterpassword) {
-  return await bcrypt.compare(enterpassword, thispassword);
-};
-
-// create  manager model
-const manager = mongoose.model("manager", managerSchema);
-
-//export module
-exporst.module = manager;
