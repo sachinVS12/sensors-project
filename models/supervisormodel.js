@@ -98,7 +98,7 @@ supervisorsSchema.method.verifypass = async function (enterpassword) {
 };
 
 //create the model
-const supervisors = mongoose.model("supervisors", supervisorsSchema);
+const supervisor = mongoose.model("supervisor", supervisorsSchema);
 
 //exports the module
-exports.moduel = supervisors;
+exports.moduel = supervisor;
