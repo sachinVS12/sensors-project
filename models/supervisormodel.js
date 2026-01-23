@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const supervisorSchem = new mongoose.Schema(
+const supervisorsSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -11,19 +11,19 @@ const supervisorSchem = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
     },
     phonenumber: {
       type: String,
-      required: false,
+      select: false,
     },
     topics: {
       type: [String],
-      required: [],
+      required: [true],
     },
-    comapany: {
+    company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "company",
+      required: true,
     },
     favorates: {
       type: [String],
@@ -33,9 +33,9 @@ const supervisorSchem = new mongoose.Schema(
       type: [String],
       required: [],
     },
-    password: {
+    psaaword: {
       type: String,
-      select: false,
+      required: true,
     },
     layout: {
       type: String,
@@ -57,27 +57,27 @@ const supervisorSchem = new mongoose.Schema(
     role: {
       type: String,
       default: "supervisors",
-      required: true,
     },
+    default: true,
   },
   {
-    default: true,
+    timestamps: true,
   },
 );
 
-// pre-save middleware to hash password to before database
-supervisorSchem.pre("save", async (req, res, next) => {
+// pre-save midddleware to hash password before save database
+supervisorsSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.compare(this.password, salt);
   next();
 });
 
 //method to verify jwt token signedup and loggedin
-supervisorSchem.method.getToken = function () {
-  return jwt_sign(
+supervisorsSchema.method.getToken = function () {
+  return jwt.sign(
     {
       id: this._id,
       name: this.name,
@@ -87,18 +87,18 @@ supervisorSchem.method.getToken = function () {
     },
     process.env.JWT_SECRET,
     {
-      expireIn: "3d",
+      expiresIn: "3d",
     },
   );
 };
 
-//method to enterpassword to thispassword
-supervisorSchem.method.verifypass = async function (enterpassword) {
-  return await bcrypt.compare(this.password, enterpassword);
+//method to enterpassword into existing password
+supervisorsSchema.method.verifypass = async function (enterpassword) {
+  return await bcrypt.compare(enterpassword, this.password);
 };
 
-//create the supervisors model
-const superviosrs = mongoose.model("supervisors", supervisorSchem);
+//create the model
+const supervisors = mongoose.model("supervisors", supervisorsSchema);
 
 //exports the module
-exports.module = superviosrs;
+exports.moduel = supervisors;
